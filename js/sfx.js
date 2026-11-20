@@ -19,9 +19,11 @@
         this.bus.gain.value = CFG.sfx.volume;
         this.bus.connect(this.ctx.destination);
       }
-      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
+      // iOS punya state "interrupted" (mis. setelah kamera/mic dibuka). Selain "running", resume.
+      if (this.ctx.state !== "running" && this.ctx.state !== "closed") this.ctx.resume().catch(() => {});
       return this.ctx;
     },
+    get running() { return !!this.ctx && this.ctx.state === "running"; },
     routeTo(dest) { if (this.bus && dest) { this.bus.connect(dest); this.recDest = dest; } },
     unroute() { if (this.bus && this.recDest) { try { this.bus.disconnect(this.recDest); } catch (e) {} } this.recDest = null; },
 

@@ -18,7 +18,10 @@
     "video/webm"
   ];
 
+  const IS_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
   const Rec = {
+    lastError: "",
     stream: null,      // stream kamera + mic
     video: null,       // <video> tersembunyi untuk sumber frame kamera
     hasAudio: false,
@@ -37,6 +40,9 @@
 
     pickMime() {
       if (typeof MediaRecorder === "undefined" || !MediaRecorder.isTypeSupported) return "";
+      // Safari/iOS: pakai "video/mp4" polos dan biarkan Safari memilih codec (H.264 + AAC).
+      // String codec spesifik bisa lolos isTypeSupported tapi menghasilkan rekaman kosong.
+      if (IS_IOS && MediaRecorder.isTypeSupported("video/mp4")) return "video/mp4";
       return MIME_CANDIDATES.find(m => { try { return MediaRecorder.isTypeSupported(m); } catch (e) { return false; } }) || "";
     },
 
@@ -92,9 +98,13 @@
       const tracks = [...this.canvasStream.getVideoTracks()];
       const mic = this.stream ? this.stream.getAudioTracks()[0] : null;
       let audioTrack = null;
+      this.lastError = "";
       try {
         const ctx = Sfx.unlock();
-        if (ctx && ctx.createMediaStreamDestination) {
+        // Mixer Web Audio hanya dipakai kalau AudioContext benar-benar "running".
+        // Di iOS, AudioContext yang "suspended"/"interrupted" menghasilkan track audio
+        // tanpa sampel → MediaRecorder Safari tidak mengeluarkan data sama sekali (video kosong).
+        if (ctx && ctx.createMediaStreamDestination && ctx.state === "running") {
           const dest = ctx.createMediaStreamDestination();
           if (mic) { this.micNode = ctx.createMediaStreamSource(new MediaStream([mic])); this.micNode.connect(dest); }
           Sfx.routeTo(dest);
@@ -110,7 +120,13 @@
       catch (e) { try { this.recorder = new MediaRecorder(new MediaStream(tracks)); } catch (e2) { this.recorder = null; return false; } }
 
       this.recorder.ondataavailable = e => { if (e.data && e.data.size) this.chunks.push(e.data); };
-      this.recorder.start(); // tanpa timeslice: kontainer MP4 utuh di Safari
+      this.recorder.onerror = e => {
+        const er = e && (e.error || e);
+        this.lastError = (er && (er.name || er.message)) ? `${er.name || ""} ${er.message || ""}`.trim() : "MediaRecorder error";
+        console.warn("[recorder] error:", this.lastError);
+      };
+      try { this.recorder.start(); } // tanpa timeslice: kontainer MP4 utuh di Safari
+      catch (e) { this.lastError = "start: " + ((e && e.message) || e); this.cleanup(); this.recorder = null; return false; }
       this.startedAt = performance.now();
       return true;
     },
@@ -118,10 +134,17 @@
     /** Stop dan kembalikan { blob, url, mime, ext, durationMs }. */
     stop() {
       return new Promise(resolve => {
-        const finish = () => {
+        let done = false;
+        const finish = async () => {
+          if (done) return; done = true;
           const duration = performance.now() - this.startedAt;
+          // Sebagian versi Safari mengirim dataavailable SETELAH event stop. Tunggu sebentar.
+          for (let i = 0; i < 20 && !this.chunks.length; i++) await new Promise(r => setTimeout(r, 100));
           this.cleanup();
-          if (!this.chunks.length) return resolve(null);
+          if (!this.chunks.length) {
+            if (!this.lastError) this.lastError = "data kosong (" + (this.recorder ? this.recorder.mimeType || this.mime : "-") + ")";
+            return resolve(null);
+          }
           const type = (this.recorder && this.recorder.mimeType) || this.mime || "video/webm";
           const base = type.split(";")[0];
           const blob = new Blob(this.chunks, { type: base });
@@ -129,8 +152,8 @@
         };
         if (!this.recorder || this.recorder.state === "inactive") return finish();
         this.recorder.onstop = finish;
-        try { this.recorder.requestData(); } catch (e) {}
-        this.recorder.stop();
+        // requestData() sebelum stop() dihapus: di Safari bisa memecah MP4 jadi dua bagian.
+        try { this.recorder.stop(); } catch (e) { finish(); }
       });
     },
 

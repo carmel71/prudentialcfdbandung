@@ -301,7 +301,11 @@
       if (S.participant && Store.get(S.participant.id)) Store.markVideoDone(S.participant.id, Comp.head ? Comp.picks : null);
     }
     showPreview();
-    if (!res) toast("Video tidak tersimpan di browser ini. Coba Chrome (Android) atau Safari (iPhone).");
+    if (!res) {
+      const why = Rec.lastError ? ` (${Rec.lastError})` : "";
+      console.warn("[app] rekaman gagal" + why);
+      toast("Videonya gagal dibuat. Ketuk Mulai Rekam untuk coba lagi." + (/[?&]debug=1/.test(location.search) ? why : ""));
+    }
   }
   function cancelRecording(silent) {
     if (S.cam === "countdown" || S.recording || S.cam === "saving") {
