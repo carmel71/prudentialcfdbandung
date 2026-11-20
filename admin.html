@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard | Cerita Kita</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+<header class="topbar">
+  <span class="logos"><img src="assets/logo-psla.png" alt="Prudential Syariah"><i></i><img src="assets/logo-prucare360-syariah.png" alt="PRUCare360 Syariah"></span>
+  <h1>Admin Dashboard</h1>
+  <span class="mode-pill">Data simulasi</span>
+  <div class="toolbar">
+    <button class="btn btn-secondary btn-sm" id="btnCsv" type="button">Export CSV</button>
+    <button class="btn btn-quiet btn-sm" id="btnReseed" type="button">Isi ulang simulasi</button>
+    <button class="btn btn-quiet btn-sm" id="btnClear" type="button">Hapus semua</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="kpis" aria-label="Ringkasan">
+    <div class="card kpi"><p class="lbl">Total registrasi</p><p class="val" id="kTotal">0</p><p class="sub" id="kTotalSub"></p></div>
+    <div class="card kpi"><p class="lbl">Persetujuan marketing</p><p class="val" id="kMkt">0</p><p class="sub" id="kMktSub"></p></div>
+    <div class="card kpi"><p class="lbl">Video challenge selesai</p><p class="val" id="kVid">0</p><p class="sub" id="kVidSub"></p></div>
+    <div class="card kpi"><p class="lbl">Postingan terverifikasi</p><p class="val" id="kVer">0</p><p class="sub" id="kVerSub"></p></div>
+    <div class="card kpi"><p class="lbl">Kopi diredeem</p><p class="val" id="kRed">0</p><p class="sub" id="kRedSub"></p></div>
+  </section>
+
+  <section class="charts">
+    <div class="card">
+      <div class="chart-head"><h2>Alur peserta</h2><p>% dari total registrasi</p></div>
+      <div class="funnel" id="funnel"></div>
+    </div>
+    <div class="card">
+      <div class="chart-head"><h2>Registrasi per waktu</h2><p id="binNote"></p></div>
+      <div class="colchart" id="colchart"><div class="tip" id="tip" hidden></div></div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-bottom:14px">
+    <div class="chart-head"><h2>Jawaban This or That</h2><p id="ansNote"></p></div>
+    <div class="answers" id="answers"></div>
+  </section>
+
+  <section class="card">
+    <div class="table-head">
+      <h2>Status peserta</h2>
+      <div class="filters" id="filters">
+        <button type="button" data-f="all" aria-pressed="true">Semua</button>
+        <button type="button" data-f="registered" aria-pressed="false">Baru daftar</button>
+        <button type="button" data-f="video" aria-pressed="false">Video selesai</button>
+        <button type="button" data-f="redeemed" aria-pressed="false">Kopi diredeem</button>
+      </div>
+      <input type="search" id="tq" placeholder="Cari ID, nama, atau WA" aria-label="Cari peserta">
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Participant ID</th><th>Nama</th><th>WhatsApp</th><th>Daftar</th><th>Marketing</th><th>Video</th><th>IG</th><th>Status</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p class="foot" id="tfoot"></p>
+  </section>
+  <p class="foot">Prototype: semua angka dihitung dari data di browser ini (data simulasi + registrasi demo). Versi produksi membaca dari database server.</p>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

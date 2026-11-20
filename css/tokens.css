@@ -1,0 +1,104 @@
+/* =========================================================
+   Cerita Kita, #LanjutTanpaJeda — design tokens & base
+   Dipakai oleh: index.html, crew.html, admin.html
+   ========================================================= */
+
+/* --- Fonts (self-hosted, tidak butuh internet) --- */
+@font-face { font-family: "FS Albert"; src: url("../fonts/fs-albert-light.woff2") format("woff2"); font-weight: 300; font-display: swap; }
+@font-face { font-family: "FS Albert"; src: url("../fonts/fs-albert-regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "FS Albert"; src: url("../fonts/fs-albert-bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "FS Albert"; src: url("../fonts/fs-albert-extrabold.woff2") format("woff2"); font-weight: 800; font-display: swap; }
+@font-face { font-family: "Chewy"; src: url("../fonts/chewy-regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("../fonts/poppins-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("../fonts/poppins-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("../fonts/poppins-800.woff2") format("woff2"); font-weight: 800; font-display: swap; }
+
+:root {
+  /* Warna diambil dari artwork & logo asli */
+  --red: #EC1B2E;          /* merah campaign / aksen tombol utama */
+  --red-press: #C3101F;
+  --teal: #2AB9B3;         /* turquoise/mint cerah (artwork) */
+  --teal-strong: #179C96;  /* turquoise untuk teks kecil di atas putih */
+  --teal-text: #0F7E79;    /* hanya untuk teks kecil yang butuh kontras */
+  --mint: #DFF5F3;         /* turquoise muda */
+  --mint-2: #BFEAE6;
+  --sun: #FFC21A;          /* aksen "spark" dari KV */
+  --ink: #2B3133;
+  --grey: #58595B;         /* abu logo */
+  --grey-2: #8A9193;
+  --line: #DCE7E6;
+  --white: #FFFFFF;
+  --ok: #179C5A;
+
+  --font-play: "Chewy", "Poppins", system-ui, sans-serif;   /* pertanyaan, headline playful */
+  --font-title: "Poppins", system-ui, sans-serif;           /* judul, angka, ID */
+  --font-ui: "FS Albert", system-ui, -apple-system, "Segoe UI", sans-serif; /* form, tombol, info */
+
+  --r-lg: 24px;
+  --r-md: 16px;
+  --r-sm: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; }
+img { display: block; max-width: 100%; }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; border-radius: 6px; }
+.sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 54px; padding: 0 26px; border-radius: 999px;
+  font: 700 17px/1 var(--font-ui); letter-spacing: .01em;
+  transition: transform .08s ease, box-shadow .08s ease, background-color .15s ease, opacity .15s;
+  user-select: none;
+}
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn-primary { background: var(--red); color: #fff; box-shadow: 0 4px 0 var(--red-press); }
+.btn-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--red-press); }
+.btn-secondary { background: #fff; color: var(--teal-text); box-shadow: inset 0 0 0 2px var(--teal); }
+.btn-secondary:active { background: var(--mint); }
+.btn-quiet { min-height: 44px; padding: 0 14px; color: var(--grey); font-weight: 700; }
+.btn-block { width: 100%; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; box-shadow: none; transform: none; }
+
+/* --- Form fields --- */
+.field { display: block; }
+.field-label { display: block; font: 700 14px/1.2 var(--font-ui); color: var(--ink); margin: 0 0 6px 4px; }
+.field-input {
+  width: 100%; height: 52px; padding: 0 16px; border-radius: var(--r-sm);
+  background: #fff; border: 1.5px solid var(--line); font-size: 16px; /* 16px = iOS tidak auto-zoom */
+  transition: border-color .15s, box-shadow .15s;
+}
+.field-input::placeholder { color: #A9B2B3; }
+.field-input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 4px rgba(42,185,179,.18); }
+.field.invalid .field-input { border-color: var(--red); }
+.field-error { min-height: 0; font-size: 13px; color: var(--red); margin: 4px 0 0 4px; }
+.field-error:empty { display: none; }
+
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; color: var(--grey); cursor: pointer; }
+.check input { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin-top: 1px; border-radius: 7px; border: 2px solid var(--grey-2); background: #fff; display: grid; place-items: center; transition: background .15s, border-color .15s; }
+.check input:checked { background: var(--teal); border-color: var(--teal); }
+.check input:checked::after { content: ""; width: 6px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: translateY(-1px) rotate(45deg); }
+.check.invalid input { border-color: var(--red); }
+.link { color: var(--teal-text); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+
+/* --- Toast --- */
+.toast { position: absolute; left: 50%; bottom: 24px; z-index: 90; transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 14px; font-size: 14px; font-weight: 700; max-width: calc(100% - 32px); text-align: center; transition: opacity .2s, transform .2s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

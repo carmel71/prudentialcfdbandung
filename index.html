@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>Cerita Kita, #LanjutTanpaJeda</title>
+  <link rel="preload" href="fonts/chewy-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/fs-albert-bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="device-slot" id="deviceSlot">
+    <div class="device" id="device">
+      <div class="app" id="app">
+        <div class="statusbar" aria-hidden="true"><span>9:41</span><span class="island"></span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+
+        <main class="screens">
+          <!-- ============ A. REGISTRASI ============ -->
+          <section class="screen scr-reg on" id="scrReg" aria-label="Registrasi">
+            <header class="brandbar">
+              <img src="assets/logo-psla.png" alt="Prudential Syariah" class="logo-psla">
+              <span class="bb-sep" aria-hidden="true"></span>
+              <img src="assets/logo-prucare360-syariah.png" alt="Asuransi Jiwa PRUCare360 Syariah" class="logo-care">
+            </header>
+            <div class="reg-hero">
+              <svg viewBox="0 0 40 40" class="spark l" aria-hidden="true"><g stroke="#FFC21A" stroke-width="4" stroke-linecap="round" fill="none"><path d="M20 17V5"/><path d="M14 19 7 10"/><path d="M26 19l7-9"/></g></svg>
+              <img src="assets/artwork-cerita-kita.png" alt="Cerita Kita, #LanjutTanpaJeda" class="lockup">
+              <svg viewBox="0 0 40 40" class="spark r" aria-hidden="true"><g stroke="#FFC21A" stroke-width="4" stroke-linecap="round" fill="none"><path d="M20 17V5"/><path d="M14 19 7 10"/><path d="M26 19l7-9"/></g></svg>
+              <p class="reg-intro">Jawab 5 pertanyaan <b>This or That</b> di depan kamera, upload videonya ke IG, lalu klaim <b>kopi gratis</b> di booth!</p>
+            </div>
+
+            <form id="regForm" class="reg-form" novalidate>
+              <label class="field" data-f="name">
+                <span class="field-label">Nama lengkap</span>
+                <input class="field-input" name="name" autocomplete="name" placeholder="Nama kamu" maxlength="60">
+                <span class="field-error"></span>
+              </label>
+              <label class="field" data-f="wa">
+                <span class="field-label">Nomor WhatsApp</span>
+                <input class="field-input" name="wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xx xxxx xxxx" maxlength="18">
+                <span class="field-error"></span>
+              </label>
+              <label class="field" data-f="email">
+                <span class="field-label">Email</span>
+                <input class="field-input" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" placeholder="nama@email.com" maxlength="80">
+                <span class="field-error"></span>
+              </label>
+              <div class="consents">
+                <label class="check" data-f="consentParticipation">
+                  <input type="checkbox" name="consentParticipation">
+                  <span>Saya setuju data saya diproses untuk ikut program Cerita Kita. <button type="button" class="link" id="openTerms">Baca ketentuan</button></span>
+                </label>
+                <p class="field-error" id="errConsent"></p>
+                <label class="check">
+                  <input type="checkbox" name="consentMarketing">
+                  <span>Saya bersedia dihubungi Prudential Syariah untuk info produk dan penawaran. <em>(Opsional)</em></span>
+                </label>
+              </div>
+              <button class="btn btn-primary btn-block" type="submit" id="btnStart">Mulai Cerita</button>
+              <p class="demo-note">Prototype: data hanya tersimpan di perangkat ini.</p>
+            </form>
+          </section>
+
+          <!-- ============ B + C. KAMERA, COUNTDOWN, RECORDING ============ -->
+          <section class="screen scr-cam" id="scrCam" aria-label="Kamera">
+            <div class="cam-wrap" id="camWrap">
+              <video id="camVideo" class="cam-src" muted playsinline autoplay aria-hidden="true"></video>
+              <canvas id="cv" aria-label="Preview kamera dan video"></canvas>
+              <div class="cd" id="countdown" hidden>
+                <p class="cd-title">Siap-siap!</p>
+                <div class="cd-ring" id="cdRing">
+                  <svg viewBox="0 0 200 200" aria-hidden="true">
+                    <circle class="cd-track" cx="100" cy="100" r="90"/>
+                    <circle class="cd-prog" id="cdProg" cx="100" cy="100" r="90" pathLength="100"/>
+                  </svg>
+                  <div class="cd-num" id="cdNum">3</div>
+                </div>
+                <p class="cd-hint" id="cdHint">Jawab pakai suara, nggak perlu tap</p>
+              </div>
+              <div class="saving" id="saving" hidden><div class="spinner"></div><p>Menyiapkan videomu…</p></div>
+            </div>
+
+            <div class="rec-bar" id="recBar" hidden>
+              <span class="rec-dot"><i></i><b id="recTime">00:00</b></span>
+              <span class="rec-step" id="recStep">Opening</span>
+              <button class="btn-mini" id="btnCancel" type="button">Batal</button>
+            </div>
+
+            <div class="sheet" id="preSheet">
+              <div id="preOk">
+                <h2 class="play-title">Siap cerita versi kamu?</h2>
+                <ul class="howto">
+                  <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="8" height="12" rx="2"/><rect x="13" y="6" width="8" height="12" rx="2"/></svg></span><span><b>5 pertanyaan This or That</b>, ganti otomatis tiap 6 detik (±37 detik)</span></li>
+                  <li id="howtoHead"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="5" transform="rotate(-18 12 10)"/><path d="M4 7 2 10l3 2M20 7l2 3-3 2M8 20h8"/></svg></span><span><b>Miringkan kepala</b> ke kiri atau kanan buat milih</span></li>
+                  <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><span id="howtoVoice"><b>Ceritain alasannya</b> pakai suara dan ekspresi</span></li>
+                  </ul>
+                <p class="track" id="trackStatus" hidden></p>
+                <button class="btn btn-primary btn-block" id="btnRecord" type="button">Mulai Rekam</button>
+                <p class="privacy">Video diproses di HP kamu, tidak di-upload ke server.</p>
+              </div>
+              <div id="preErr" hidden>
+                <h2 class="err-title" id="errTitle">Kamera belum bisa dipakai</h2>
+                <p class="err-body" id="errBody"></p>
+                <ol class="err-steps" id="errSteps"></ol>
+                <button class="btn btn-primary btn-block" id="btnRetryCam" type="button">Coba lagi</button>
+                <button class="btn btn-quiet btn-block" id="btnDemo" type="button">Lanjut tanpa kamera (mode demo)</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ D. PREVIEW & DOWNLOAD ============ -->
+          <section class="screen scr-prev" id="scrPrev" aria-label="Preview video">
+            <div id="prevOk">
+              <header class="prev-head"><h2 class="play-title">Yeay, videomu jadi!</h2></header>
+              <div class="prev-video">
+                <video id="resVideo" playsinline controls loop preload="auto"></video>
+                <button class="unmute" id="btnUnmute" type="button">🔊 Nyalakan suara</button>
+              </div>
+              <div class="prev-actions">
+                <button class="btn btn-primary" id="btnSave" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Simpan Video</button>
+                <button class="btn btn-secondary" id="btnRetake" type="button">Rekam Ulang</button>
+              </div>
+              <div class="pid"><span>Participant ID</span><b id="pidText">CK-····</b><small>Sebutkan ID ini ke crew saat klaim kopi.</small></div>
+              <div class="claim">
+                <h3>Cara klaim kopi gratis</h3>
+                <ol class="claim-steps">
+                  <li><span>Upload videonya ke <b>Instagram Story</b> atau <b>Reels</b>.</span></li>
+                  <li><span>Tag <b class="js-ig">@prudentialsyariah</b> dan pakai <b class="js-tag">#LanjutTanpaJeda</b>.</span></li>
+                  <li><span>Tunjukkan postinganmu ke crew di booth.</span></li>
+                </ol>
+                <button class="btn btn-secondary btn-block btn-sm" id="btnCaption" type="button">Salin caption</button>
+              </div>
+              <p class="fmt-note" id="fmtNote"></p>
+            </div>
+            <div class="empty" id="prevEmpty" hidden>
+              <h2 class="play-title">Belum ada video</h2>
+              <p>Rekam dulu ceritamu, nanti hasilnya muncul di sini.</p>
+              <button class="btn btn-primary" id="btnGoRecord" type="button">Mulai Rekam</button>
+            </div>
+          </section>
+        </main>
+
+        <div class="modal" id="termsModal" hidden role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+          <div class="modal-card">
+            <h3 id="termsTitle">Ketentuan program Cerita Kita</h3>
+            <p class="draft">Draft untuk prototype. Ganti dengan teks resmi dari tim legal Prudential Syariah.</p>
+            <ol>
+              <li>Program terbuka untuk pengunjung booth Prudential Syariah di CFD Bandung.</li>
+              <li>Data nama, nomor WhatsApp, dan email dipakai untuk pendaftaran, verifikasi, dan klaim hadiah program ini.</li>
+              <li>Video direkam dan diproses di perangkat peserta. Kamera juga dipakai untuk mendeteksi gerakan kepala saat memilih jawaban; data wajah tidak disimpan dan tidak dikirim. Peserta mengunggah video sendiri ke akun Instagram miliknya.</li>
+              <li>Satu peserta mendapat satu kopi, selama persediaan masih ada.</li>
+              <li>Persetujuan dihubungi untuk informasi pemasaran bersifat opsional dan tidak memengaruhi keikutsertaan.</li>
+            </ol>
+            <button class="btn btn-primary btn-block" id="closeTerms" type="button">Mengerti</button>
+          </div>
+        </div>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel presentasi (hanya tampil di layar lebar) -->
+  <aside class="rail" id="rail" aria-label="Alur microsite">
+    <img src="assets/artwork-cerita-kita.png" alt="" class="rail-lockup">
+    <h1>Microsite interaktif This or That</h1>
+    <p class="rail-sub">Prototype fungsional aktivasi PRUCare360 Syariah di CFD Bandung. Kamera, rekaman, dan video final berjalan langsung di browser HP peserta.</p>
+    <ol class="rail-steps">
+      <li><button type="button" data-jump="reg"><span class="n">A</span><span><b>Registrasi</b><small>Nama, WhatsApp, email, dan consent</small></span></button></li>
+      <li><button type="button" data-jump="pre"><span class="n">B</span><span><b>Pre-recording</b><small>Kamera selfie aktif, instruksi, Mulai Rekam</small></span></button></li>
+      <li><button type="button" data-jump="rec"><span class="n">C</span><span><b>Countdown & recording</b><small>3-2-1, lalu video 37 detik otomatis</small></span></button></li>
+      <li><button type="button" data-jump="prev"><span class="n">D</span><span><b>Preview & simpan</b><small>Simpan video, rekam ulang, instruksi IG</small></span></button></li>
+    </ol>
+    <div class="rail-links">
+      <a href="crew.html" target="_blank" rel="noopener">Crew dashboard</a>
+      <a href="admin.html" target="_blank" rel="noopener">Admin dashboard</a>
+    </div>
+    <div class="rail-tools">
+      <button type="button" id="btnFill">Isi contoh data</button>
+      <button type="button" id="btnReset">Reset sesi</button>
+    </div>
+    <p class="rail-env" id="envNote"></p>
+  </aside>
+</div>
+
+<div class="sr-only" aria-live="polite" id="srLive"></div>
+
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/sfx.js"></script>
+<script src="js/recorder.js"></script>
+<script src="js/headtrack.js"></script>
+<script src="js/composer.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

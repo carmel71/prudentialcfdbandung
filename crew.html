@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Crew Dashboard | Cerita Kita</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+<header class="topbar">
+  <span class="logos"><img src="assets/logo-psla.png" alt="Prudential Syariah"><i></i><img src="assets/logo-prucare360-syariah.png" alt="PRUCare360 Syariah"></span>
+  <h1>Crew Dashboard</h1>
+  <label class="crew-select">Crew
+    <select id="crewName"><option>Crew 1</option><option>Crew 2</option><option>Crew 3</option><option>Crew 4</option></select>
+  </label>
+</header>
+
+<main class="wrap crew">
+  <p class="mode-pill" style="margin-bottom:14px">Mode demo: data simulasi di browser ini</p>
+
+  <div class="progress-strip">
+    <p><b id="redeemCount">0</b> kopi diredeem dari <span id="regCount">0</span> peserta</p>
+    <div class="bar" aria-hidden="true"><i id="redeemBar" style="width:0"></i></div>
+  </div>
+
+  <section class="card">
+    <label class="search" for="q">
+      <span class="sr-only">Cari peserta</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="CK-XXXX atau nomor WhatsApp" autocomplete="off" autocapitalize="characters" enterkeyhint="search">
+    </label>
+    <p class="hint">Ketik Participant ID, nomor WhatsApp, atau nama peserta.</p>
+    <div class="results" id="results"></div>
+  </section>
+
+  <section class="card detail" id="detail" hidden aria-live="polite"></section>
+
+  <section class="card" style="margin-top:16px">
+    <h2>Redeem terakhir</h2>
+    <ul class="log" id="log"></ul>
+  </section>
+  <p class="foot">Satu peserta hanya bisa redeem satu kali. Di versi produksi, pengecekan ini dilakukan di server supaya berlaku untuk semua HP crew.</p>
+</main>
+
+<div class="dialog" id="confirm" hidden role="dialog" aria-modal="true" aria-labelledby="cTitle">
+  <div class="dialog-card">
+    <h3 id="cTitle">Berikan kopi?</h3>
+    <p id="cBody"></p>
+    <div class="dialog-actions">
+      <button class="btn btn-secondary btn-sm" id="cNo" type="button">Batal</button>
+      <button class="btn btn-primary btn-sm" id="cYes" type="button">Ya, redeem</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/crew.js"></script>
+</body>
+</html>
